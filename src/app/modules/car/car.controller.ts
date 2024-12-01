@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { carServices } from './car.service';
 import { carValidationSchema } from './car.validation';
 
+// Create car
 const createCar = async (req: Request, res: Response) => {
   try {
     const { car: carData } = req.body;
