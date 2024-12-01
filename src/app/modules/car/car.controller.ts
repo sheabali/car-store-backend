@@ -16,12 +16,9 @@ const createCar = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    const err = error as Error;
     res.status(500).json({
-      message: 'Validation failed',
       success: false,
-      error: err,
-      stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
+      message: error instanceof Error ? error.message : 'Something Went wrong',
     });
   }
 };
@@ -35,16 +32,13 @@ const getAllCar = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: 'Cars retrieved successfully',
-      success: true,
+      status: true,
       data: cars,
     });
   } catch (error) {
-    const err = error as Error;
     res.status(500).json({
-      message: 'Something went wrong',
       success: false,
-      error: err,
-      stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
+      message: error instanceof Error ? error.message : 'Something Went wrong.',
     });
   }
 };
@@ -56,17 +50,14 @@ const getSingleCar = async (req: Request, res: Response) => {
     const result = await carServices.getSingleCarFromDB(carId);
 
     res.status(200).json({
-      success: true,
+      status: true,
       message: 'Car is retivieved successfully',
       data: result,
     });
   } catch (error) {
-    const err = error as Error;
     res.status(500).json({
-      message: 'Something went wrong',
-      success: false,
-      error: err,
-      stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
+      status: false,
+      message: error instanceof Error ? error.message : 'Something Went wrong.',
     });
   }
 };
@@ -82,16 +73,13 @@ const updateCar = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: 'Car updated successfully',
-      success: true,
+      status: true,
       data: updatedCar,
     });
   } catch (error) {
-    const err = error as Error;
     res.status(500).json({
-      message: 'Something went wrong',
-      success: false,
-      error: err,
-      stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
+      status: false,
+      message: error instanceof Error ? error.message : 'Something Went wrong.',
     });
   }
 };
@@ -108,12 +96,9 @@ const DeleteCar = async (req: Request, res: Response) => {
       data: {},
     });
   } catch (error) {
-    const err = error as Error;
     res.status(500).json({
-      message: 'Something went wrong',
       success: false,
-      error: err,
-      stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
+      message: error instanceof Error ? error.message : 'Something Went wrong.',
     });
   }
 };

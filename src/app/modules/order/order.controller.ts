@@ -11,7 +11,7 @@ const createOrder = async (req: Request, res: Response) => {
     const result = await orderServices.createOrderInDB(zodparsedData);
 
     res.status(201).json({
-      success: true,
+      status: true,
       message: 'Order created successfully',
       data: result,
     });
@@ -28,7 +28,7 @@ const getRevenue = async (req: Request, res: Response) => {
   try {
     const totalRevenue = await orderServices.calculateRevenue();
     res.status(200).json({
-      success: true,
+      status: true,
       message: 'Revenue calculated successfully',
       data: totalRevenue,
     });
