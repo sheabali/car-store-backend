@@ -18,8 +18,7 @@ const createOrder = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(400).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to create order',
+      error: error instanceof Error ? error : 'Something Went wrong.',
     });
   }
 };
@@ -35,8 +34,7 @@ const getRevenue = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error ? error.message : 'Failed to calculate revenue!',
+      error: error instanceof Error ? error : 'Something Went wrong.',
     });
   }
 };

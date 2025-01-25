@@ -5,10 +5,8 @@ import { carValidationSchema } from './car.validation';
 // Create car
 const createCar = async (req: Request, res: Response) => {
   try {
-    const { car: carData } = req.body;
-
     // Data validation using zod
-    const zodparsedData = carValidationSchema.parse(carData);
+    const zodparsedData = carValidationSchema.parse(req.body);
 
     const result = await carServices.createCarIntoDB(zodparsedData);
     res.status(200).json({
@@ -19,7 +17,8 @@ const createCar = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Something Went wrong',
+      message: 'Failed to create order',
+      error: error instanceof Error ? error : 'Something Went wrong.',
     });
   }
 };
@@ -39,7 +38,7 @@ const getAllCar = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Something Went wrong.',
+      error: error instanceof Error ? error : 'Something Went wrong.',
     });
   }
 };
@@ -57,8 +56,8 @@ const getSingleCar = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({
-      status: false,
-      message: error instanceof Error ? error.message : 'Something Went wrong.',
+      success: false,
+      error: error instanceof Error ? error : 'Something Went wrong.',
     });
   }
 };
@@ -80,7 +79,7 @@ const updateCar = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       status: false,
-      message: error instanceof Error ? error.message : 'Something Went wrong.',
+      error: error instanceof Error ? error : 'Something Went wrong.',
     });
   }
 };
@@ -99,7 +98,7 @@ const DeleteCar = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : 'Something Went wrong.',
+      error: error instanceof Error ? error : 'Something Went wrong.',
     });
   }
 };
