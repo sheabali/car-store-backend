@@ -2,6 +2,7 @@ import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
 import { CarRoutes } from './app/modules/car/car.route';
 import { orderRouter } from './app/modules/order/order.route';
+import { UserRoutes } from './app/modules/user/user.route';
 const app: Application = express();
 
 // parsers
@@ -10,6 +11,7 @@ app.use(cors());
 
 // Car route
 app.use('/api/cars', CarRoutes);
+app.use('/api/users', UserRoutes);
 
 // Order route
 app.use('/api/orders', orderRouter);
