@@ -27,7 +27,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
 
     // checking if the user is exist
     const user = await User.isUserExistsByCustomId(userId);
-    console.log(user);
+    console.log('USER', user);
     if (requiredRoles && !requiredRoles.includes(role)) {
       throw new AppError(
         StatusCodes.UNAUTHORIZED,
