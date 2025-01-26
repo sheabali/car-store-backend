@@ -1,7 +1,9 @@
-import mongoose, { model } from 'mongoose';
-import { TUser } from './user.interface';
+import { model, Schema } from 'mongoose';
+import { TUser, UserModel } from './user.interface';
+import config from '../../config';
+import bcrypt from 'bcrypt';
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema<TUser, UserModel>(
   {
     name: {
       type: String,
@@ -30,4 +32,19 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-export const User = model<TUser>('User', userSchema);
+userSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this; // doc
+  // hashing password and save into DB
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+userSchema.statics.isUserExistsByCustomId = async function (id: string) {
+  return await User.findOne({ id }).select('+password');
+};
+
+export const User = model<TUser, UserModel>('User', userSchema);
