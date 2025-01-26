@@ -7,7 +7,12 @@ import { User } from '../user/user.model';
 
 const loginUser = async (payload: TLoginUser) => {
   // checking if the user is exist
-  const user = await User.isUserExistsByCustomId(payload.id);
+  // const user = await User.isUserExistsByCustomId(payload.id);
+  // console.log('jjjxx', payload);
+
+  // Check if the user exists using the email
+  const user = await User.findOne({ email: payload.email });
+  console.log('Retrieved User:', user);
 
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'This user is not found !');
