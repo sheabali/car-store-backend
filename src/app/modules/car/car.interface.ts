@@ -1,4 +1,4 @@
-export type Car = {
+export interface TCar {
   brand: string;
   model: string;
   year: number;
@@ -7,4 +7,4 @@ export type Car = {
   description: string;
   quantity: number;
   inStock: boolean;
-};
+}

@@ -1,34 +1,44 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { CarModel } from '../car.model';
+import { CarSearchableFields } from './car.constant';
 import { Car } from './car.interface';
 
-interface CarQuery {
-  $or?: Array<{
-    brand?: RegExp;
-    model?: RegExp;
-    category?: RegExp;
-  }>;
-  searchTerm?: string;
-}
+// interface CarQuery {
+//   $or?: Array<{
+//     brand?: RegExp;
+//     model?: RegExp;
+//     category?: RegExp;
+//   }>;
+//   searchTerm?: string;
+// }
 
 const createCarIntoDB = async (car: Car) => {
   const result = await CarModel.create(car);
   return result;
 };
 
-const getAllCarFromDB = async (searchTerm?: string) => {
-  const query: CarQuery = {};
-  if (searchTerm) {
-    // Case-insensitive regex
-    const regex = new RegExp(searchTerm, 'i');
-    query.$or = [{ brand: regex }, { model: regex }, { category: regex }];
-  }
+const getAllCarFromDB = async (query: Record<string, unknown>) => {
+  const carQuery = new QueryBuilder(CarModel.find(), query)
 
-  // Fetch cars based on query
-  return CarModel.find(query);
+    .search(CarSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  console.log('carQuery', carQuery);
+
+  const result = await carQuery.modelQuery;
+  const meta = await carQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
 };
 
 const getSingleCarFromDB = async (_id: string) => {
   const result = await CarModel.findOne({ _id });
+
   return result;
 };
 

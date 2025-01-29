@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { carServices } from './car.service';
 import { carValidationSchema } from './car.validation';
+import sendResponse from '../../utils/sendResponse';
+import { StatusCodes } from 'http-status-codes';
 
 // Create car
 const createCar = async (req: Request, res: Response) => {
@@ -24,42 +26,28 @@ const createCar = async (req: Request, res: Response) => {
 };
 
 const getAllCar = async (req: Request, res: Response) => {
-  try {
-    const { searchTerm } = req.query;
+  const result = await carServices.getAllCarFromDB(req.query);
 
-    // Call the service layer with the search term
-    const cars = await carServices.getAllCarFromDB(searchTerm as string);
-
-    res.status(200).json({
-      message: 'Cars retrieved successfully',
-      status: true,
-      data: cars,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error instanceof Error ? error : 'Something Went wrong.',
-    });
-  }
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Car are retrieved successfully',
+    meta: result.meta,
+    data: result.result,
+  });
 };
 
 const getSingleCar = async (req: Request, res: Response) => {
-  try {
-    const { carId } = req.params;
+  const { carId } = req.params;
 
-    const result = await carServices.getSingleCarFromDB(carId);
-
-    res.status(200).json({
-      status: true,
-      message: 'Car is retivieved successfully',
-      data: result,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error instanceof Error ? error : 'Something Went wrong.',
-    });
-  }
+  const result = await carServices.getSingleCarFromDB(carId);
+  console.log(result);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Car are retrieved successfully',
+    data: result,
+  });
 };
 
 // Update car

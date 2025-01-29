@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose';
-import { Car } from './car/car.interface';
+import { TCar } from './car/car.interface';
 
-const carSchema = new Schema<Car>(
+const carSchema = new Schema<TCar>(
   {
     brand: { type: String, required: true },
     model: { type: String, required: true },
@@ -23,4 +23,4 @@ const carSchema = new Schema<Car>(
   },
 );
 
-export const CarModel = model<Car>('Car', carSchema);
+export const CarModel = model<TCar>('Car', carSchema);

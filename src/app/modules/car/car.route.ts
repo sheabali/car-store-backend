@@ -1,10 +1,16 @@
 import express from 'express';
 import { CarControllers } from './car.controller';
+import validateRequest from '../../middlewares/validateRequest';
+import { createCarValidationSchema } from './car.validation';
 
 const router = express.Router();
 
 // add new car section
-router.post('/', CarControllers.createCar);
+router.post(
+  '/',
+  // validateRequest(createCarValidationSchema),
+  CarControllers.createCar,
+);
 
 // get all car and searchTerm can be brand, model, category
 router.get('/', CarControllers.getAllCar);
