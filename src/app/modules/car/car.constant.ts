@@ -5,4 +5,6 @@ export const CarSearchableFields = [
   'brand',
   'category',
   'availability',
+  'searchTerm',
+  'prefix',
 ];

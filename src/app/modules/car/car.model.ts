@@ -1,26 +1,26 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import { TCar } from './car.interface';
 
-// Define the Mongoose schema
-const carSchema = new Schema<TCar>({
-  brand: { type: String, required: true },
-  model: { type: String, required: true },
-  year: {
-    type: Number,
-    required: true,
-    min: 1886,
-    max: new Date().getFullYear(),
+const carSchema = new Schema<TCar>(
+  {
+    brand: { type: String, required: true },
+    model: { type: String, required: true },
+    year: { type: Number, required: true },
+    price: { type: Number, required: true },
+    category: {
+      type: String,
+      enum: ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible'],
+      required: true,
+    },
+    description: { type: String, required: true },
+    quantity: { type: Number, required: true },
+    inStock: { type: Boolean, required: true },
   },
-  price: { type: Number, required: true, min: 0 },
-  category: {
-    type: String,
-    enum: ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible'],
-    required: true,
+  {
+    // Adds createdAt and updatedAt
+    timestamps: true,
+    versionKey: false,
   },
-  description: { type: String, required: true },
-  quantity: { type: Number, required: true, min: 0 },
-  inStock: { type: Boolean, required: true },
-});
+);
 
-// Export the model
-const CarModel = mongoose.model<ICar>('Car', carSchema);
-export default CarModel;
+export const CarModel = mongoose.model<TCar>('Car', carSchema);
