@@ -6,6 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 
 const createOrder = catchAsync(async (req, res) => {
   const user = req.user;
+  console.log('user', user);
 
   const order = await orderServices.createOrder(user, req.body, req.ip!);
 

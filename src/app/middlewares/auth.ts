@@ -10,6 +10,7 @@ import { User } from '../modules/user/user.model';
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
+    console.log(token);
 
     if (!token) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized');
@@ -24,9 +25,11 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'Unauthorized');
     }
     const { role, userId } = decoded;
+    console.log('userId', userId);
 
     // checking if the user is exist
     const user = await User.isUserExistsByCustomId(userId);
+    console.log('user !!!!', user);
     if (!user) {
       throw new AppError(StatusCodes.NOT_FOUND, 'This user is not found !');
     }
