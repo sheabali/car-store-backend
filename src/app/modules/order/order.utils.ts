@@ -1,6 +1,5 @@
-import { response } from 'express';
 import config from '../../config';
-import Shurjopay from 'shurjopay';
+import Shurjopay, { PaymentResponse, VerificationResponse } from 'shurjopay';
 
 const shurjopay = new Shurjopay();
 
@@ -13,14 +12,29 @@ shurjopay.config(
 );
 console.log(shurjopay);
 
-const makePayment = async (paymentPayload: any) => {
-  const paymentResult = await shurjopay.makePayment(
-    paymentPayload,
-    (response) => console.log(response),
-    (error) => console.log(error),
-  );
-
-  return paymentResult;
+const makePaymentAsync = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  paymentPayload: any,
+): Promise<PaymentResponse> => {
+  return new Promise((resolve, reject) => {
+    shurjopay.makePayment(
+      paymentPayload,
+      (response) => resolve(response),
+      (error) => reject(error),
+    );
+  });
 };
 
-export const orderUtils = { makePayment };
+const verifyPaymentAsync = (
+  order_id: string,
+): Promise<VerificationResponse[]> => {
+  return new Promise((resolve, reject) => {
+    shurjopay.verifyPayment(
+      order_id,
+      (response) => resolve(response),
+      (error) => reject(error),
+    );
+  });
+};
+
+export const orderUtils = { makePaymentAsync, verifyPaymentAsync };

@@ -17,17 +17,19 @@ const createOrder = async (
   payload: { products: { product: string; quantity: number }[] },
   client_ip: string,
 ) => {
-  console.log('payload', payload);
+  console.log('user', user?.userId);
 
   if (!payload?.products?.length)
     throw new AppError(StatusCodes.NOT_ACCEPTABLE, 'Order is not specified');
 
   const products = payload.products;
+  // console.log('products', products);
 
   let totalPrice = 0;
   const productDetails = await Promise.all(
     products.map(async (item) => {
       const product = await CarModel.findById(item.product);
+      console.log('product', product?.price, product?.quantity);
       if (product) {
         const subtotal = product ? (product.price || 0) * item.quantity : 0;
         totalPrice += subtotal;
@@ -35,9 +37,10 @@ const createOrder = async (
       }
     }),
   );
+  console.log('productDetails', productDetails);
 
-  const order = await Order.create({
-    user,
+  let order = await Order.create({
+    user: user?.userId,
     products: productDetails,
     totalPrice,
   });
@@ -48,7 +51,7 @@ const createOrder = async (
     amount: totalPrice,
     order_id: order._id,
     currency: 'BDT',
-    customer_name: user.name,
+    customer_name: 'N/A',
     customer_address: 'N/A',
     customer_email: user.email,
     customer_phone: 'N/A',
@@ -56,11 +59,54 @@ const createOrder = async (
     client_ip,
   };
 
-  const payment = await orderUtils.makePayment(shurjopayPayload);
+  const payment = await orderUtils.makePaymentAsync(shurjopayPayload);
 
-  return { order, payment };
+  if (payment?.transactionStatus) {
+    order = await order.updateOne({
+      transaction: {
+        id: payment.sp_order_id,
+        transactionStatus: payment.transactionStatus,
+      },
+    });
+  }
+
+  return payment.checkout_url;
 };
 
+const getOrders = async () => {
+  const data = await Order.find();
+  return data;
+};
+
+const verifyPayment = async (order_id: string) => {
+  const verifiedPayment = await orderUtils.verifyPaymentAsync(order_id);
+
+  if (verifiedPayment.length) {
+    await Order.findOneAndUpdate(
+      {
+        'transaction.id': order_id,
+      },
+      {
+        'transaction.bank_status': verifiedPayment[0].bank_status,
+        'transaction.sp_code': verifiedPayment[0].sp_code,
+        'transaction.sp_message': verifiedPayment[0].sp_message,
+        'transaction.transactionStatus': verifiedPayment[0].transaction_status,
+        'transaction.method': verifiedPayment[0].method,
+        'transaction.date_time': verifiedPayment[0].date_time,
+        status:
+          verifiedPayment[0].bank_status == 'Success'
+            ? 'Paid'
+            : verifiedPayment[0].bank_status == 'Failed'
+              ? 'Pending'
+              : verifiedPayment[0].bank_status == 'Cancel'
+                ? 'Cancelled'
+                : '',
+      },
+    );
+  }
+
+  return verifiedPayment;
+};
 const calculateRevenue = async () => {
   const result = await Order.aggregate([
     {
@@ -97,5 +143,7 @@ const calculateRevenue = async () => {
 
 export const orderServices = {
   createOrder,
+  getOrders,
+  verifyPayment,
   calculateRevenue,
 };
