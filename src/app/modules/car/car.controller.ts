@@ -26,19 +26,13 @@ const createCar = async (req: Request, res: Response) => {
 };
 
 const getAllCar = async (req: Request, res: Response) => {
-  const { price } = req.query;
-  console.log('price', price);
-
-  // if (typeof this.price === 'string') {
-  //   this.price = parseFloat(this.price); // Convert string to number
-  // }
   const result = await carServices.getAllCarFromDB(req.query);
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
     message: 'Car are retrieved successfully',
-    meta: result.meta,
+    // meta: result.meta,
     data: result.result,
   });
 };

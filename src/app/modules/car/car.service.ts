@@ -1,7 +1,7 @@
 import QueryBuilder from '../../builder/QueryBuilder';
 import { CarModel } from '../car.model';
 import { CarSearchableFields } from './car.constant';
-import { Car } from './car.interface';
+import { TCar } from './car.interface';
 
 // interface CarQuery {
 //   $or?: Array<{
@@ -12,21 +12,19 @@ import { Car } from './car.interface';
 //   searchTerm?: string;
 // }
 
-const createCarIntoDB = async (car: Car) => {
+const createCarIntoDB = async (car: TCar) => {
   const result = await CarModel.create(car);
   return result;
 };
 
 const getAllCarFromDB = async (query: Record<string, unknown>) => {
+  console.log('searchTram.......', query);
   const carQuery = new QueryBuilder(CarModel.find(), query)
-
     .search(CarSearchableFields)
     .filter()
     .sort()
     .paginate()
     .fields();
-  console.log('carQuery', carQuery);
-
   const result = await carQuery.modelQuery;
   const meta = await carQuery.countTotal();
 
@@ -42,7 +40,7 @@ const getSingleCarFromDB = async (_id: string) => {
   return result;
 };
 
-const updateCarIntoDB = async (carId: string, updateData: Partial<Car>) => {
+const updateCarIntoDB = async (carId: string, updateData: Partial<TCar>) => {
   const updateCar = await CarModel.findByIdAndUpdate(
     carId,
     { $set: updateData },

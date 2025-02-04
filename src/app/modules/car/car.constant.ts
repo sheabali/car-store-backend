@@ -1,10 +1,10 @@
 export const CarSearchableFields = [
-  'price',
+  'searchTerm',
   'range',
+  // 'price',
   'model',
   'brand',
   'category',
   'availability',
-  'searchTerm',
   'prefix',
 ];
