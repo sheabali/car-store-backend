@@ -1,35 +1,37 @@
+import { StatusCodes } from 'http-status-codes';
+import AppError from '../../error/AppError';
 import { CarModel } from '../car.model';
 import { OrderModel } from '../order.model';
+import { TUser } from '../user/user.interface';
 
-const createOrderInDB = async (orderData: {
-  email: string;
-  car: string;
-  quantity: number;
-}) => {
-  const { car, quantity } = orderData;
+const createOrder = async (
+  user: TUser,
+  payload: { products: { product: string; quantity: number }[] },
+) => {
+  if (!payload?.products?.length)
+    throw new AppError(StatusCodes.NOT_ACCEPTABLE, 'Order is not specified');
 
-  // find the car to ensure it exists
-  const carData = await CarModel.findById(car);
-  if (!carData) {
-    throw new Error('Car not found');
-  }
+  const products = payload.products;
 
-  // Check inventory
-  if (carData.quantity < quantity) {
-    throw new Error('Insufficient stock available');
-  }
+  let totalPrice = 0;
+  const productDetails = await Promise.all(
+    products.map(async (item) => {
+      const product = await CarModel.findById(item.product);
+      if (product) {
+        const subtotal = product ? (product.price || 0) * item.quantity : 0;
+        totalPrice += subtotal;
+        return item;
+      }
+    }),
+  );
 
-  // Create the order
-  const order = await OrderModel.create(orderData);
+  const order = await OrderModel.create({
+    user,
+    products: productDetails,
+    totalPrice,
+  });
 
-  // Update car inventory
-  carData.quantity -= quantity;
-  if (carData.quantity === 0) {
-    carData.inStock = false;
-  }
-  await carData.save();
-
-  return order;
+  return { order };
 };
 
 const calculateRevenue = async () => {
@@ -67,6 +69,6 @@ const calculateRevenue = async () => {
 };
 
 export const orderServices = {
-  createOrderInDB,
+  createOrder,
   calculateRevenue,
 };
