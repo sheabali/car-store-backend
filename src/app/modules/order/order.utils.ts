@@ -1,7 +1,9 @@
-import Shurjopay from 'shurjopay';
 import config from '../../config';
+import Shurjopay from 'shurjopay';
 
-Shurjopay.config(
+const shurjopay = new Shurjopay();
+
+shurjopay.config(
   config.sp.sp_endpoint!,
   config.sp.sp_username!,
   config.sp.sp_password!,
