@@ -1,27 +1,21 @@
 import { Request, Response } from 'express';
 import { orderServices } from './order.service';
-import { orderValidationSchema } from './order.validation';
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { StatusCodes } from 'http-status-codes';
 
-const createOrder = async (req: Request, res: Response) => {
-  try {
-    const orderData = req.body;
+const createOrder = catchAsync(async (req, res) => {
+  const user = req.user;
 
-    // Data validation using zod
-    const zodparsedData = orderValidationSchema.parse(orderData);
-    const result = await orderServices.createOrderInDB(zodparsedData);
+  const order = await orderServices.createOrder(user, req.body, req.ip!);
 
-    res.status(201).json({
-      status: true,
-      message: 'Order created successfully',
-      data: result,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      error: error instanceof Error ? error : 'Something Went wrong.',
-    });
-  }
-};
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    success: true,
+    message: 'Order placed successfully',
+    data: order,
+  });
+});
 
 const getRevenue = async (req: Request, res: Response) => {
   try {

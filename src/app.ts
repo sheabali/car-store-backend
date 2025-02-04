@@ -3,6 +3,7 @@ import express, { Application, Request, Response } from 'express';
 import notFound from './app/middlewares/notFound';
 
 import router from './routes';
+import globalErrorHandler from './app/middlewares/globalErrorhandler';
 const app: Application = express();
 
 // parsers
@@ -16,6 +17,8 @@ app.use('/api', router);
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to the ecommerce api service.');
 });
+
+app.use(globalErrorHandler);
 
 //Not Found
 app.use(notFound);
