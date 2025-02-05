@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post(
   '/',
-  auth(ROLE.user),
+  // auth(ROLE.user),
   validateRequest(userValidationSchema),
 
   UserControllers.createUser,

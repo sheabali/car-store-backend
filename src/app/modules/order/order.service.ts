@@ -17,6 +17,7 @@ const createOrder = async (
   payload: { products: { product: string; quantity: number }[] },
   client_ip: string,
 ) => {
+  console.log('products', payload);
   console.log('user', user?.userId);
 
   if (!payload?.products?.length)
