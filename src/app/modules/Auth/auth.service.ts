@@ -8,36 +8,14 @@ import bcrypt from 'bcrypt';
 import { JwtPayload } from 'jsonwebtoken';
 
 const loginUser = async (payload: TLoginUser) => {
-  // checking if the user is exist
-  // const user = await User.isUserExistsByCustomId(payload.id);
-
   // Check if the user exists using the email
   const user = await User.findOne({ email: payload.email });
 
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'This user is not found !');
   }
-  // checking if the user is already deleted
-
-  // const isDeleted = user?.isDeleted;
-
-  // if (isDeleted) {
-  //   throw new AppError(StatusCodes.FORBIDDEN, 'This user is deleted !');
-  // }
-
-  // $2b$10$0l.1sbeMBBBW5l/TT70MKeMPJgercIIKr6awa4CuPLNkwU9C2Y9I2
-  // $2b$10$0l.1sbeMBBBW5l/TT70MKeMPJgercIIKr6awa4CuPLNkwU9C2Y9I2
-
-  // checking if the user is blocked
-
-  // const userStatus = user?.status;
-
-  // if (userStatus === 'blocked') {
-  //   throw new AppError(StatusCodes.FORBIDDEN, 'This user is blocked ! !');
-  // }
 
   //checking if the password is correct
-
   if (!(await User.isPasswordMatched(payload?.password, user?.password)))
     throw new AppError(StatusCodes.FORBIDDEN, 'Password do not matched');
 
@@ -70,30 +48,31 @@ const changePassword = async (
   userData: JwtPayload,
   payload: { oldPassword: string; newPassword: string },
 ) => {
-  console.log('userData', userData);
-  console.log('oldPassword', payload.oldPassword, payload.newPassword);
-
-  // checking if the user is exist
+  // Checking if the user exists
   const user = await User.isUserExistsByCustomId(userData.userId);
-
   if (!user) {
-    throw new AppError(StatusCodes.NOT_FOUND, 'This user is not found !');
+    throw new AppError(StatusCodes.NOT_FOUND, 'This user is not found!');
   }
 
-  //checking if the password is correct
+  // Checking if the old password is correct
+  const isPasswordMatched = await User.isPasswordMatched(
+    payload.oldPassword,
+    user?.password,
+  );
+  if (!isPasswordMatched) {
+    throw new AppError(StatusCodes.FORBIDDEN, 'Password does not match!');
+  }
 
-  if (!(await User.isPasswordMatched(payload.oldPassword, user?.password)))
-    throw new AppError(StatusCodes.FORBIDDEN, 'Password do not matched');
-
-  //hash new password
+  // Hash the new password
   const newHashedPassword = await bcrypt.hash(
     payload.newPassword,
     Number(config.bcrypt_salt_rounds),
   );
 
+  // Update the user's password in the database
   await User.findOneAndUpdate(
     {
-      id: userData.userId,
+      _id: userData.userId,
       role: userData.role,
     },
     {
@@ -101,6 +80,7 @@ const changePassword = async (
       needsPasswordChange: false,
       passwordChangedAt: new Date(),
     },
+    { new: true },
   );
 
   return null;
