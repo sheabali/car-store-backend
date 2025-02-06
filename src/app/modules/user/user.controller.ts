@@ -12,5 +12,14 @@ const createUser = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const changePassword = catchAsync(async (req, res) => {
+  const result = await userServices.changePasswordIntoDB(req.body);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Password Change succesfully',
+    data: result,
+  });
+});
 
-export const UserControllers = { createUser };
+export const UserControllers = { createUser, changePassword };

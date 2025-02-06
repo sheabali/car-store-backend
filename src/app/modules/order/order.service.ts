@@ -17,20 +17,15 @@ const createOrder = async (
   payload: { products: { product: string; quantity: number }[] },
   client_ip: string,
 ) => {
-  console.log('products', payload);
-  console.log('user', user?.userId);
-
   if (!payload?.products?.length)
     throw new AppError(StatusCodes.NOT_ACCEPTABLE, 'Order is not specified');
 
   const products = payload.products;
-  // console.log('products', products);
 
   let totalPrice = 0;
   const productDetails = await Promise.all(
     products.map(async (item) => {
       const product = await CarModel.findById(item.product);
-      console.log('product', product?.price, product?.quantity);
       if (product) {
         const subtotal = product ? (product.price || 0) * item.quantity : 0;
         totalPrice += subtotal;
@@ -38,7 +33,6 @@ const createOrder = async (
       }
     }),
   );
-  console.log('productDetails', productDetails);
 
   let order = await Order.create({
     user: user?.userId,

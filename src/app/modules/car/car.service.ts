@@ -18,7 +18,6 @@ const createCarIntoDB = async (car: TCar) => {
 };
 
 const getAllCarFromDB = async (query: Record<string, unknown>) => {
-  console.log('searchTram.......', query);
   const carQuery = new QueryBuilder(CarModel.find(), query)
     .search(CarSearchableFields)
     .filter()

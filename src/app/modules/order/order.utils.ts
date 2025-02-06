@@ -10,7 +10,7 @@ shurjopay.config(
   config.sp.sp_prefix!,
   config.sp.sp_return_url!,
 );
-console.log(shurjopay);
+// console.log(shurjopay);
 
 const makePaymentAsync = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

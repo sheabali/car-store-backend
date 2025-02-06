@@ -5,5 +5,9 @@ const createUserIntoDB = async (user: TUser) => {
   const result = await User.create(user);
   return result;
 };
+const changePasswordIntoDB = async (user: TUser) => {
+  const result = await User.create(user);
+  return result;
+};
 
-export const userServices = { createUserIntoDB };
+export const userServices = { createUserIntoDB, changePasswordIntoDB };

@@ -13,6 +13,7 @@ export interface TUser {
   updatedAt?: Date;
 }
 export interface UserModel extends Model<TUser> {
+  isPasswordMatched(password: string, password1: string): unknown;
   //instance methods for checking if the user exist
   isUserExistsByCustomId(id: string): Promise<TUser>;
   //instance methods for checking if passwords are matched

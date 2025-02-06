@@ -41,7 +41,7 @@ const getSingleCar = async (req: Request, res: Response) => {
   const { carId } = req.params;
 
   const result = await carServices.getSingleCarFromDB(carId);
-  console.log(result);
+
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
