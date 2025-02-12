@@ -12,6 +12,27 @@ const createUser = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const blockUser = catchAsync(async (req, res) => {
+  const user = await userServices.blockUser(req.params.id);
+  console.log(user);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'User Block successfully',
+    data: user,
+  });
+});
+const getAllUser = catchAsync(async (req, res) => {
+  const user = await userServices.getAllUser();
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'User retrieved successfully',
+    data: user,
+  });
+});
 const changePassword = catchAsync(async (req, res) => {
   const result = await userServices.changePasswordIntoDB(req.body);
   sendResponse(res, {
@@ -22,4 +43,9 @@ const changePassword = catchAsync(async (req, res) => {
   });
 });
 
-export const UserControllers = { createUser, changePassword };
+export const UserControllers = {
+  createUser,
+  getAllUser,
+  blockUser,
+  changePassword,
+};

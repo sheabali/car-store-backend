@@ -8,6 +8,7 @@ export interface TUser {
   name: string;
   email: string;
   password: string;
+  status: string;
   role?: 'user' | 'admin';
   createdAt?: Date;
   updatedAt?: Date;

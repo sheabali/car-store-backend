@@ -21,6 +21,11 @@ const userSchema = new Schema<TUser, UserModel>(
       type: String,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ['in-progress', 'blocked'],
+      default: 'in-progress',
+    },
     role: {
       type: String,
       enum: ['user', 'admin'],
