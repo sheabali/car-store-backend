@@ -1,4 +1,6 @@
+import { StatusCodes } from 'http-status-codes';
 import QueryBuilder from '../../builder/QueryBuilder';
+import AppError from '../../error/AppError';
 import { CarModel } from '../car.model';
 import { CarSearchableFields } from './car.constant';
 import { TCar } from './car.interface';
@@ -40,6 +42,12 @@ const getSingleCarFromDB = async (_id: string) => {
 };
 
 const updateCarIntoDB = async (carId: string, updateData: Partial<TCar>) => {
+  const car = await CarModel.findById(carId);
+
+  if (!car) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'This Car not found');
+  }
+
   const updateCar = await CarModel.findByIdAndUpdate(
     carId,
     { $set: updateData },
@@ -50,6 +58,12 @@ const updateCarIntoDB = async (carId: string, updateData: Partial<TCar>) => {
 };
 
 const deletedCarFromDB = async (_id: string) => {
+  const car = await CarModel.findById(_id);
+
+  if (!car) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'This Car not found');
+  }
+
   const result = await CarModel.deleteOne({ _id });
   return result;
 };

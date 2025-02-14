@@ -1,29 +1,20 @@
 import { Request, Response } from 'express';
 import { carServices } from './car.service';
-import { carValidationSchema } from './car.validation';
 import sendResponse from '../../utils/sendResponse';
 import { StatusCodes } from 'http-status-codes';
+import catchAsync from '../../utils/catchAsync';
 
 // Create car
-const createCar = async (req: Request, res: Response) => {
-  try {
-    // Data validation using zod
-    const zodparsedData = carValidationSchema.parse(req.body);
-
-    const result = await carServices.createCarIntoDB(zodparsedData);
-    res.status(200).json({
-      status: true,
-      message: 'Car created successfßully',
-      data: result,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create order',
-      error: error instanceof Error ? error : 'Something Went wrong.',
-    });
-  }
-};
+const createCar = catchAsync(async (req, res) => {
+  const result = await carServices.createCarIntoDB(req.body);
+  console.log(req.body);
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    success: true,
+    message: 'Car create successfully',
+    data: result,
+  });
+});
 
 const getAllCar = async (req: Request, res: Response) => {
   const result = await carServices.getAllCarFromDB(req.query);
@@ -51,45 +42,30 @@ const getSingleCar = async (req: Request, res: Response) => {
 };
 
 // Update car
-const updateCar = async (req: Request, res: Response) => {
-  try {
-    // Get carId from the request parameters
-    const { carId } = req.params;
-    const updateData = req.body;
-
-    const updatedCar = await carServices.updateCarIntoDB(carId, updateData);
-
-    res.status(200).json({
-      message: 'Car updated successfully',
-      status: true,
-      data: updatedCar,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      error: error instanceof Error ? error : 'Something Went wrong.',
-    });
-  }
-};
-
+const updateCar = catchAsync(async (req, res) => {
+  const { carId } = req.params;
+  const updateData = req.body;
+  const result = await carServices.updateCarIntoDB(carId, updateData);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Car update successfully',
+    data: result,
+  });
+});
 // Deleted Car
-const DeleteCar = async (req: Request, res: Response) => {
-  try {
-    const { carId } = req.params;
-    await carServices.deletedCarFromDB(carId);
+const DeleteCar = catchAsync(async (req: Request, res: Response) => {
+  const { carId } = req.params;
+  console.log('params', req.params);
+  await carServices.deletedCarFromDB(carId);
 
-    res.status(200).json({
-      message: 'Car deleted successfully',
-      status: true,
-      data: {},
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error instanceof Error ? error : 'Something Went wrong.',
-    });
-  }
-};
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: 'Car deleted successfully',
+    success: true,
+    data: {},
+  });
+});
 
 export const CarControllers = {
   createCar,

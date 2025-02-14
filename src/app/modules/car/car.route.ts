@@ -1,14 +1,18 @@
 import express from 'express';
 import { CarControllers } from './car.controller';
 import validateRequest from '../../middlewares/validateRequest';
-import { createCarValidationSchema } from './car.validation';
+
+import auth from '../../middlewares/auth';
+import { ROLE } from '../../Constant/role.constant';
+import { carValidationSchema } from './car.validation';
 
 const router = express.Router();
 
 // add new car section
 router.post(
   '/',
-  // validateRequest(createCarValidationSchema),
+  auth(ROLE.admin),
+  validateRequest(carValidationSchema),
   CarControllers.createCar,
 );
 
@@ -19,9 +23,9 @@ router.get('/', CarControllers.getAllCar);
 router.get('/:carId', CarControllers.getSingleCar);
 
 // PUT request to update a car
-router.put('/:carId', CarControllers.updateCar);
+router.put('/:carId', auth(ROLE.admin), CarControllers.updateCar);
 
 // Deleted a car
-router.delete('/:carId', CarControllers.DeleteCar);
+router.delete('/:carId', auth(ROLE.admin), CarControllers.DeleteCar);
 
 export const CarRoutes = router;
