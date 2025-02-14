@@ -22,3 +22,10 @@ export const carValidationSchema = z.object({
     inStock: z.boolean(),
   }),
 });
+
+export const updateCarSchema = z.object({
+  body: z.object({
+    price: z.number().positive().optional(),
+    quantity: z.number().int().nonnegative().optional(),
+  }),
+});
