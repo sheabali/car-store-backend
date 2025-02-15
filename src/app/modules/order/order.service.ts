@@ -21,7 +21,7 @@ const createOrder = async (
     throw new AppError(StatusCodes.NOT_ACCEPTABLE, 'Order is not specified');
 
   const products = payload.products;
-
+  console.log('user suer', user.userId);
   let totalPrice = 0;
   const productDetails = await Promise.all(
     products.map(async (item) => {
@@ -69,7 +69,13 @@ const createOrder = async (
 };
 
 const getOrders = async () => {
-  const data = await Order.find();
+  const data = await Order.find()
+    .populate('user', 'name email')
+    .populate('products.product');
+  return data;
+};
+const deleteOrders = async (id: string) => {
+  const data = await Order.findByIdAndDelete(id);
   return data;
 };
 
@@ -141,4 +147,5 @@ export const orderServices = {
   getOrders,
   verifyPayment,
   calculateRevenue,
+  deleteOrders,
 };

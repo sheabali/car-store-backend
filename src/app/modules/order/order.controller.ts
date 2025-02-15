@@ -3,10 +3,11 @@ import { orderServices } from './order.service';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { StatusCodes } from 'http-status-codes';
+import { TUser } from '../user/user.interface';
 
 const createOrder = catchAsync(async (req, res) => {
-  const user = req.user;
-  console.log('user........', user);
+  const user = req.user as TUser;
+  console.log('user', user.userId);
 
   const order = await orderServices.createOrder(user, req.body, req.ip!);
 
@@ -40,6 +41,17 @@ const getOrders = catchAsync(async (req, res) => {
   });
 });
 
+const deleteOrders = catchAsync(async (req, res) => {
+  const result = await orderServices.deleteOrders(req.params.id);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Order Delete successfully',
+    data: result,
+  });
+});
+
 const getRevenue = async (req: Request, res: Response) => {
   try {
     const totalRevenue = await orderServices.calculateRevenue();
@@ -60,5 +72,6 @@ export const OrderController = {
   createOrder,
   verifyPayment,
   getOrders,
+  deleteOrders,
   getRevenue,
 };

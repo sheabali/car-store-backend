@@ -4,7 +4,7 @@ import validateRequest from '../../middlewares/validateRequest';
 
 import auth from '../../middlewares/auth';
 import { ROLE } from '../../Constant/role.constant';
-import { carValidationSchema } from './car.validation';
+import { carValidationSchema, updateCarSchema } from './car.validation';
 
 const router = express.Router();
 
@@ -23,7 +23,12 @@ router.get('/', CarControllers.getAllCar);
 router.get('/:carId', CarControllers.getSingleCar);
 
 // PUT request to update a car
-router.put('/:carId', auth(ROLE.admin), CarControllers.updateCar);
+router.patch(
+  '/:carId',
+  auth(ROLE.admin),
+  validateRequest(updateCarSchema),
+  CarControllers.updateCar,
+);
 
 // Deleted a car
 router.delete('/:carId', auth(ROLE.admin), CarControllers.DeleteCar);
