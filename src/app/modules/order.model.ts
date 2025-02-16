@@ -5,7 +5,7 @@ const OrderSchema = new Schema<IOrder>(
   {
     user: {
       type: Schema.Types.ObjectId,
-      ref: 'Car',
+      ref: 'User',
       required: true,
     },
     products: [

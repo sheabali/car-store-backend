@@ -20,6 +20,9 @@ const createOrder = async (
   if (!payload?.products?.length)
     throw new AppError(StatusCodes.NOT_ACCEPTABLE, 'Order is not specified');
 
+  const userExists = await Order.findOne({ user: user.userId });
+  console.log('userExists', userExists);
+
   const products = payload.products;
   console.log('user suer', user.userId);
   let totalPrice = 0;
@@ -69,9 +72,7 @@ const createOrder = async (
 };
 
 const getOrders = async () => {
-  const data = await Order.find()
-    .populate('user', 'name email')
-    .populate('products.product');
+  const data = await Order.find().populate('user').populate('products.product');
   return data;
 };
 const deleteOrders = async (id: string) => {
