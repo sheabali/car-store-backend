@@ -1,13 +1,13 @@
 # Car Store API
 
-A robust backend API for managing cars and orders, built with **Node.js**, **Express.js**, **Mongoose**, and **TypeScript**, with data validation using **Zod**. The API supports CRUD operations for cars and features an order management system, including total revenue calculation.
+A robust backend API for managing cars and orders, built with **Node.js**, **Express.js**, **Mongoose**, and **TypeScript**, with data validation using **Zod**. The API supports CRUD operations for cars and features an order management system.
 
 ## Prerequisites
 
 Ensure you have the following installed before setting up the project:
 
 - **Node.js** (v16 or higher)
-- **npm** or **Yarn**
+- **npm**
 - **MongoDB** (running locally or using a connection URI)
 
 ## Installation
